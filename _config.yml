@@ -26,11 +26,11 @@ components:
     # 不蒜子访问统计
     busuanzi:
         enabled: true
-        start_date: 2021-08-03
+        start_date: 2021-01-01
     # My Popular Repositories
     side_bar_repo:
-        enabled: false
-        limit: 3
+        enabled: true
+        limit: 1
     # 文章字数统计
     word_count:
         enabled: true
