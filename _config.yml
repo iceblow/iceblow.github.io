@@ -4,8 +4,8 @@
 baseurl:
 url: https://iceblow.github.io/ 
 date_format: "ordinal"
-title: 东旭的博客
-#subtitle: "公众号：XXX"
+title: dxyin的博客
+subtitle: "个人博客"
 description: "东旭的个人博客，学习总结，技术分享"
 keywords: 博客，技术，总结
 timezone: Asia/Shanghai
@@ -25,12 +25,12 @@ components:
         hide-platforms: qq,facebook
     # 不蒜子访问统计
     busuanzi:
-        enabled: false
+        enabled: true
         start_date: 2021-08-03
     # My Popular Repositories
     side_bar_repo:
-        enabled: true
-        limit: 5
+        enabled: false
+        limit: 3
     # 文章字数统计
     word_count:
         enabled: true
@@ -44,7 +44,7 @@ compress_html:
   clippings: all
   comments: ["<!--", "-->"]
 # 代码高亮风格，支持的 theme 列表见 https://github.com/mzlogin/rouge-themes
-highlight_theme: github
+highlight_theme: base16.dark
 
 # ---------------- #
 #      Author      #
@@ -150,7 +150,7 @@ plugins:
 # ---------------- #
 simple_jekyll_search:
     # 是否支持全文搜索
-    fulltext: false
+    fulltext: true
     # 最多显示多少条搜索结果
     limit: 10
 
