@@ -2,20 +2,20 @@
 #   Main Configs   #
 # ---------------- #
 baseurl:
-url: https://mazhuang.org
+url: https://iceblow.github.io/ 
 date_format: "ordinal"
-title: 尹的博客
-subtitle: "公众号：XXX"
-description: "东旭的个人博客，公众号：XXX"
-keywords: 东旭，博客，技术，总结
+title: 东旭的博客
+#subtitle: "公众号：XXX"
+description: "东旭的个人博客，学习总结，技术分享"
+keywords: 博客，技术，总结
 timezone: Asia/Shanghai
 encoding: "utf-8"
-side_bar_repo_limit: 5
+side_bar_repo_limit: 1
 repository: iceblow/iceblow.github.io
 # 对 css 和 js 资源的 cdn 加速配置
 cdn:
     jsdelivr:
-        enabled: true
+        enabled: false
 # 可选组件配置
 components:
     # 分享
@@ -26,7 +26,7 @@ components:
     # 不蒜子访问统计
     busuanzi:
         enabled: false
-        start_date: 2020-05-03
+        start_date: 2021-08-03
     # My Popular Repositories
     side_bar_repo:
         enabled: true
@@ -38,7 +38,7 @@ components:
     # 修改图片请替换 assets/images/qrcode.jpg
     qrcode:
         enabled: true
-        image_alt: TODO二维码名称
+        image_alt: 个人微信
 # 压缩页面内容
 compress_html:
   clippings: all
@@ -49,7 +49,7 @@ highlight_theme: github
 # ---------------- #
 #      Author      #
 # ---------------- #
-author: yin dongxu
+author: yindongxu
 organization: 
 organization_url: 
 github_username: iceblow
@@ -80,18 +80,18 @@ navs:
 #    href: /wiki/
 #    label: 维基
 
-  -
-    href: /links/
-    label: 链接
+#  -
+#    href: /links/
+#    label: 链接
 
-  -
-    href: /about/
-    label: 关于
+#  -
+#    href: /about/
+#    label: 关于
 
 # ---------------- #
 #       RSS        #
 # ---------------- #
-subscribe_rss: /feed.xml
+#subscribe_rss: /feed.xml
 
 # ---------------- #
 #      Jekyll      #
@@ -114,10 +114,10 @@ plugins:
     - jekyll-feed
 #    - jemoji
 #     - jekyll-mentions
-collections:
-    wiki:
-        output: true
-        permalink: /wiki/:path/
+#collections:
+#    wiki:
+#        output: true
+#        permalink: /wiki/:path/
 
 # ---------------- #
 #      Comments    #
@@ -150,7 +150,7 @@ collections:
 # ---------------- #
 simple_jekyll_search:
     # 是否支持全文搜索
-    fulltext: true
+    fulltext: false
     # 最多显示多少条搜索结果
     limit: 10
 
