@@ -2,7 +2,7 @@
 #   Main Configs   #
 # ---------------- #
 baseurl:
-url: https://iceblow.github.io/ 
+url: https://iceblow.github.io 
 date_format: "ordinal"
 title: 技术博客
 subtitle: "公众号：JAVA编程实战"
