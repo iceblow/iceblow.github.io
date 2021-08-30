@@ -263,14 +263,20 @@ ArrayList删除元素有两种,一种是根据索引删除,二是直接删除对
   }
   ```
   就是循环遍历数组,当元素第一次出现的时候,删除这个元素,同时返回true,如果元素不存在,那么数组不改变,同时返回false.  
-### 2.LinkList ###
+
+
+
+### 2.LinkList
 
 - LinkList是List接口的双向链表实现,不仅实现了List的方法,同时允许元素为null
 - 获取index索引的元素时,会从链表的头部或尾部进行查找,哪边近从哪边开始
 - 注意该实现是线程非安全  
+
 下面是LinkList的类关系图,它继承了AbstractSequentialList,实现了List, Deque, Cloneable, java.io.Serializable接口  
 ![](https://i.loli.net/2021/08/20/KxZ3qGRoD2AdUjO.png)
-#### 2.1基本属性 ####
+
+#### 2.1基本属性
+
 ```java
 public class LinkedList<E> extends AbstractSequentialList<E>
 implements List<E>, Deque<E>, Cloneable, java.io.Serializable{
@@ -287,7 +293,8 @@ implements List<E>, Deque<E>, Cloneable, java.io.Serializable{
     transient Node<E> last;
 }
 ```
-#### 2.2构造器 ####
+#### 2.2构造器
+
 ```java
 /**
  * 构造空的list
