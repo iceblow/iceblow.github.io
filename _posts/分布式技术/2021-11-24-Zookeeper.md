@@ -46,7 +46,9 @@ BASE 理论是对 CAP 中的一致性和可用性进行一个权衡的结果，�
 
 ### Java客户端
 
-zookeeper安装过程省略（下载地址https://downloads.apache.org/zookeeper/stable/）。
+zookeeper安装过程省略（下载地址https://downloads.apache.org/zookeeper/stable/，包名选择带bin的）。
 
-代码TODO
+
+
+
 
