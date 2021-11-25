@@ -48,7 +48,215 @@ BASE 理论是对 CAP 中的一致性和可用性进行一个权衡的结果，�
 
 zookeeper安装过程省略（下载地址https://downloads.apache.org/zookeeper/stable/，包名选择带bin的）。
 
+客户端连接可以使用zk原生的api，也可以使用curator连接。Curator 是 Netflix 公司开源的一套 zookeeper 客户端框架，解决了很多 Zookeeper 客户端非常底层的细节开发工作，包括连接重连、反复注册 Watcher 和 NodeExistsException 异常等。
 
+Curator 包含了几个包：
 
+- **curator-framework**：对 zookeeper 的底层 api 的一些封装。
+- **curator-client**：提供一些客户端的操作，例如重试策略等。
+- **curator-recipes**：封装了一些高级特性，如：Cache 事件监听、选举、分布式锁、分布式计数器、分布式 Barrier 等。
 
+```java
+public class CuratorDemo {
+    public static void main(String[] args) throws Exception {
+        // 连接地址,可以多个,拼接
+        String zookeeperConnectionString = "localhost:2181";
+        // 重试策略
+        RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
+
+        // 客户端
+        CuratorFramework client = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
+        client.start();
+
+        String data = "myData";
+        // 创建节点,并返回节点目录
+        String result = client.create().forPath("/node1", data.getBytes());
+      	// 结果：/node1
+        System.err.println("result = " + result);
+
+        // 关闭客户端
+        client.close();
+    }
+}
+```
+
+### 客户端命令
+
+在 zookeeper 中，可以说 zookeeper 中的所有存储的数据是由 znode 组成的，节点也称为 znode，并以 key/value 形式存储数据。
+
+整体结构类似于 linux 文件系统的模式以树形结构存储。其中根路径以 **/** 开头。
+
+进入 zookeeper 安装的 bin 目录，通过sh zkCli.sh打开命令行终端。
+
+#### ls 命令
+
+ls 命令用于查看某个路径下目录列表。
+
+```shell
+ls path
+```
+
+- path：代表路径。
+
+案例：
+
+```shell
+[zk: localhost:2181(CONNECTED) 17] ls /
+[node, node-1, node1, node2, test, zookeeper]
+```
+
+除了zookeeper节点外，其他几个节点都是我们测试创建的。
+
+#### get 命令
+
+get 命令用于获取节点数据和状态信息。
+
+```shell
+get path [watch]
+```
+
+- path：代表路径。
+- [watch]：对节点进行事件监听。
+
+案例：
+
+```shell
+[zk: localhost:2181(CONNECTED) 18] get /node1
+myData
+```
+
+#### stat 命令
+
+stat 命令用于查看节点状态信息。
+
+格式：
+
+```shell
+stat path [watch]
+```
+
+- path：代表路径。
+- [watch]：对节点进行事件监听。
+
+案例：
+
+```shell
+[zk: localhost:2181(CONNECTED) 22] stat /node1
+cZxid = 0x13
+ctime = Thu Nov 25 16:39:01 CST 2021
+mZxid = 0x13
+mtime = Thu Nov 25 16:39:01 CST 2021
+pZxid = 0x13
+cversion = 0
+dataVersion = 0
+aclVersion = 0
+ephemeralOwner = 0x0
+dataLength = 6
+numChildren = 0
+```
+
+#### create 命令
+
+create 命令用于创建节点并赋值。
+
+格式：
+
+```
+create [-s] [-e] path data acl
+```
+
+- **[-s] [-e]**：-s 和 -e 都是可选的，-s 代表顺序节点， -e 代表临时节点，注意其中 -s 和 -e 可以同时使用的，并且临时节点不能再创建子节点。
+- **path**：指定要创建节点的路径，比如 **/runoob**。
+- **data**：要在此节点存储的数据。
+- **acl**：访问权限相关，默认是 world，相当于全世界都能访问。
+
+#### set 命令
+
+set 命令用于修改节点存储的数据。
+
+格式：
+
+```
+set path data [version]
+```
+
+- **path**：节点路径。
+- **data**：需要存储的数据。
+- **[version]**：可选项，版本号(可用作乐观锁)。
+
+### 节点特性
+
+1、同一级节点 key 名称是唯一的
+
+2、创建节点时，必须要带上全路径
+
+3、session 关闭，临时节点清除
+
+4、自动创建顺序节点
+
+5、watch 机制，监听节点变化
+
+6、delete 命令只能一层一层删除
+
+ 有了上述众多节点特性，使得 zookeeper 能开发不出不同的经典应用场景，比如：
+
+- 数据发布/订阅
+- 负载均衡
+- 分布式协调/通知
+- 集群管理
+- master 管理
+- 分布式锁
+- 分布式队列
+
+### 分布式锁实现原理
+
+分布式锁是控制分布式系统之间同步访问共享资源的一种方式。
+
+下面介绍 zookeeper 如何实现分布式锁，讲解排他锁和共享锁两类分布式锁。
+
+#### 排他锁
+
+排他锁（Exclusive Locks），又被称为写锁或独占锁，如果事务T1对数据对象O1加上排他锁，那么整个加锁期间，只允许事务T1对O1进行读取和更新操作，其他任何事务都不能进行读或写。
+
+定义锁：
+
+```
+/exclusive_lock/lock
+```
+
+**实现方式：**
+
+利用 zookeeper 的同级节点的唯一性特性，在需要获取排他锁时，所有的客户端试图通过调用 create() 接口，在 **/exclusive_lock** 节点下创建临时子节点 **/exclusive_lock/lock**，最终只有一个客户端能创建成功，那么此客户端就获得了分布式锁。同时，所有没有获取到锁的客户端可以在 **/exclusive_lock** 节点上注册一个子节点变更的 watcher 监听事件，以便重新争取获得锁。
+
+#### 共享锁
+
+共享锁（Shared Locks），又称读锁。如果事务T1对数据对象O1加上了共享锁，那么当前事务只能对O1进行读取操作，其他事务也只能对这个数据对象加共享锁，直到该数据对象上的所有共享锁都释放。
+
+定义锁:
+
+```
+/shared_lock/[hostname]-请求类型W/R-序号
+```
+
+**实现方式：**
+
+1、客户端调用 create 方法创建类似定义锁方式的临时顺序节点。
+
+![img](https://gitee.com/dxyin/pic/raw/master/20211125183207.png)
+
+2、客户端调用 getChildren 接口来获取所有已创建的子节点列表。
+
+3、判断是否获得锁，对于读请求如果所有比自己小的子节点都是读请求或者没有比自己序号小的子节点，表明已经成功获取共享锁，同时开始执行度逻辑。对于写请求，如果自己不是序号最小的子节点，那么就进入等待。
+
+4、如果没有获取到共享锁，读请求向比自己序号小的最后一个写请求节点注册 watcher 监听，写请求向比自己序号小的最后一个节点注册watcher 监听。
+
+实际开发过程中，可以 curator 工具包封装的API帮助我们实现分布式锁。
+
+<dependency>  <groupId>org.apache.curator</groupId>  <artifactId>curator-recipes</artifactId>  <version>x.x.x</version> </dependency>
+
+curator 的几种锁方案 ：
+
+- 1、**InterProcessMutex**：分布式可重入排它锁
+- 2、**InterProcessSemaphoreMutex**：分布式排它锁
+- 3、**InterProcessReadWriteLock**：分布式读写锁
 
