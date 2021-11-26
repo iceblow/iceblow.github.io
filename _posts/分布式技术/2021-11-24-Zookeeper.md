@@ -208,7 +208,7 @@ set path data [version]
 - 分布式锁
 - 分布式队列
 
-### 分布式锁实现原理
+### 分布式锁实现
 
 分布式锁是控制分布式系统之间同步访问共享资源的一种方式。
 
@@ -259,4 +259,128 @@ curator 的几种锁方案 ：
 - 1、**InterProcessMutex**：分布式可重入排它锁
 - 2、**InterProcessSemaphoreMutex**：分布式排它锁
 - 3、**InterProcessReadWriteLock**：分布式读写锁
+
+下面例子模拟 20 个线程使用重入排它锁 InterProcessMutex 同时争抢锁：
+
+```java
+public class InterprocessLock {
+
+    public static void main(String[] args)  {
+        CuratorFramework zkClient = getZkClient();
+        String lockPath = "/lock";
+        InterProcessMutex lock = new InterProcessMutex(zkClient, lockPath);
+        //模拟20个线程抢锁
+        for (int i = 0; i < 20; i++) {
+            new Thread(new TestThread(i, lock)).start();
+        }
+    }
+
+    // 创建client
+    private static CuratorFramework getZkClient() {
+        String zkServerAddress = "localhost:2181";
+        ExponentialBackoffRetry retryPolicy = new ExponentialBackoffRetry(1000, 3, 5000);
+        CuratorFramework zkClient = CuratorFrameworkFactory.builder()
+                .connectString(zkServerAddress)
+                .sessionTimeoutMs(5000)
+                .connectionTimeoutMs(5000)
+                .retryPolicy(retryPolicy)
+                .build();
+        zkClient.start();
+        return zkClient;
+    }
+
+    // 线程类
+    static class TestThread implements Runnable {
+        private Integer threadFlag;
+        private InterProcessMutex lock;
+
+        public TestThread(Integer threadFlag, InterProcessMutex lock) {
+            this.threadFlag = threadFlag;
+            this.lock = lock;
+        }
+
+        @Override
+        public void run() {
+            try {
+                lock.acquire();
+                System.out.println("第"+threadFlag+"线程获取到了锁");
+                //等到1秒后释放锁
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                try {
+                    lock.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+}
+```
+
+### 机器注册ID
+
+在我们使用雪花算法的时候，需要配置机器的workId，由于一个服务会部署在多台机器上，这就
+
+造成每个机器的workId是相同的，还是存在雪花算法ID重复的可能。
+
+我们可以利用zookeeper的特性，来生成唯一的workId。
+
+原理：微服务的每个机器连接到zookeeper，创建持久化的顺序节点，每个节点的序号是递增的，不会重复，这样每个机器的workId是唯一的。
+
+雪花算法如果遇到时钟回拨，那么这台机器再注册生成新的节点，新节点和老节点的workId不同，这样可以解决时钟回拨的问题（个人思路）。
+
+demo如下：
+
+```java
+package com.example.zookeeper.api;
+
+import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.zookeeper.CreateMode;
+
+/**
+ * 获取注册节点id
+ */
+public class MachineIdDemo {
+
+    public static void main(String[] args) throws Exception {
+        CuratorFramework client = createClient();
+        String path = "/tem_seq";
+
+        // PERSISTENT_SEQUENTIAL:持久化序列;  EPHEMERAL_SEQUENTIAL:短暂序列(会自动删除)
+        for (int i = 0; i < 4; i++) {
+            // 返回节点名称,包含序号
+            String result = client.create().withMode(CreateMode.PERSISTENT_SEQUENTIAL).forPath(path, "seq_test".getBytes());
+            System.err.println(i + "节点:" + result);
+        }
+        client.close();
+    }
+
+    public static CuratorFramework createClient() {
+        String zookeeperConnectionString = "localhost:2181";
+        RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
+        CuratorFramework client = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy);
+        client.start();
+        return client;
+    }
+}
+
+```
+
+打印日志结果：
+
+```
+0节点:/tem_seq0000000011
+1节点:/tem_seq0000000012
+2节点:/tem_seq0000000013
+3节点:/tem_seq0000000014
+```
+
+对节点名称处理后，可以得到workId。
 
