@@ -16,7 +16,18 @@ Elasticsearch使用Lucene作为内部引擎，但是在你使用它做全文搜�
 - 分布式的**实时分析搜索引擎**
 - 可以扩展到上百台服务器，处理PB级结构化或非结构化数据
 
-### 数据管理
+### 关系型数据库和ES对比
+
+| Relational DB      | Elasticsearch   |
+| ------------------ | --------------- |
+| 数据库（database） | 索引（indices） |
+| 表（tables）       | types           |
+| 行（rows）         | documents       |
+| 字段（columns）    | fields          |
+
+
+
+### 数据管理(增删改查)
 
 ES提供近乎实时的数据操纵和搜索能力。默认情况下，从索引/更新/删除数据到在搜索结果中出现数据之前，可以预期延迟一秒钟（刷新间隔）。这是与其他SQL数据库的重要区别，SQL数据库中的数据在事务完成后立即可用。
 
@@ -497,4 +508,368 @@ POST /teacher/_update_by_query
     }
 }
 ```
+
+### **搜索API `_search`**
+
+#### 测试数据准备
+
+在开始探索之前，我们先下载官方提供的样例数据集，导入到我们的集群中。
+
+百度云盘链接: https://pan.baidu.com/s/15wtt3olKf06KxugXSqMq2w 提取码: vse4
+
+将下载的accounts.json 上传到当前ES服务器目录中，执行以下命令
+
+```shell
+curl -H "Content-Type: application/json" -XPOST "localhost:9200/bank/_doc/_bulk?pretty&refresh" --data-binary "@accounts.json"
+```
+
+首先，我们查询es的所有索引
+
+```shell
+curl -X GET "localhost:9200/_cat/indices?v"
+```
+
+结果出现了很多索引，因为之前安装了elk等其他工具，直接忽略其他索引，重点关注本次导入的索引bank。
+
+![image-20211130151141811](https://gitee.com/dxyin/pic/raw/master/20211130151142.png)
+
+发现已经新增了索引`bank`，其中有1000个document。
+
+我们有两种方式进行搜索： 
+
+- 在请求URL中传参
+
+```shell
+curl -X GET "localhost:9200/bank/_search?q=*&sort=account_number:asc&pretty"
+```
+
+- 在请求BODY中传参
+
+```shell
+curl -X GET "localhost:9200/bank/_search?pretty" -H 'Content-Type: application/json' -d'
+{
+  "query": { "match_all": {} },
+  "sort": [
+    { "account_number": "asc" }
+  ]
+}
+```
+
+通常，我**们会选择在BODY中使用JSON格式进行传参**。
+
+上面两种方式，查询的结果是一样的。**查询关键字**为*，代表所有值。
+
+**排序**是根据account_number升序，**默认是返回10条数据**。返回格式如下：
+
+```json
+{
+  "took" : 19,	//查询时间
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 100,	//匹配的document数量
+      "relation" : "eq"
+    },
+    "max_score" : null,
+    "hits" : [	//匹配的document，多个
+      {
+        "_index" : "bank",
+        "_type" : "_doc",
+        "_id" : "9",
+        "_score" : null,
+        "_source" : {
+          "account_number" : 9,
+          "balance" : 24776,
+          "firstname" : "Opal",
+          "lastname" : "Meadows",
+          "age" : 39,
+          "gender" : "M",
+          "address" : "963 Neptune Avenue",
+          "employer" : "Cedward",
+          "email" : "opalmeadows@cedward.com",
+          "city" : "Olney",
+          "state" : "OH"
+        },
+        "sort" : [
+          9
+        ]
+      }
+      ......
+    ]
+  }
+}
+```
+
+#### 查询语句
+
+**基本参数选项：query、from、size、sort、_source**
+
+```shell
+GET /bank/_search
+{
+    "query": {"match_all": {}},
+    "from": 10,
+    "size": 2,
+    "sort": [
+       {"balance": { "order": "desc" } }
+    ],
+    "_source":["account_number","balance"]
+}
+```
+
+**query**:指定查询条件，这里使用`{ "match_all": {} }`表示查询条件匹配所有记录
+**from**:表示从第n条匹配记录开始取值,默认为0
+**size**:表示匹配条数，默认10
+**sort**:表示排序，这里使用`{ "balance": { "order": "desc" }}`,表示按balance降序排序,这里也可以写成`[{ "balance": "desc" }]`
+**_source**:表示查询字段，这里使用`["account_number", "balance"]`表示返回结果中，只需要返回"account_number", "balance"两个字段即可。默认返回所有字段。
+上面的查询结果如下：
+
+```json
+{
+   "took": 34,
+   "timed_out": false,
+   "_shards": {
+      "total": 1,
+      "successful": 1,
+      "skipped": 0,
+      "failed": 0
+   },
+   "hits": {
+      "total": {
+         "value": 1000, //查询总数
+         "relation": "eq"
+      },
+      "max_score": null,
+      "hits": [
+         {
+            "_index": "bank",
+            "_type": "_doc",
+            "_id": "255",
+            "_score": null,
+            "_source": { //结果只有以下2个字段
+               "account_number": 255,
+               "balance": 49339
+            },
+            "sort": [
+               49339
+            ]
+         },
+         {
+            "_index": "bank",
+            "_type": "_doc",
+            "_id": "524",
+            "_score": null,
+            "_source": {
+               "account_number": 524,
+               "balance": 49334
+            },
+            "sort": [
+               49334
+            ]
+         }
+      ]
+   }
+}
+```
+
+#### **查询匹配条件**
+
+上面例子中，我们在选项query中，使用了`{ "match_all": {} }`表示查询条件匹配所有记录，下面以一系列的例子介绍各种匹配条件
+
+##### **match查询**
+
+###### 查询 account_number=20 的document
+
+```shell
+GET /bank/_search
+{
+    "query": {
+        "match": {"account_number": 20} 
+    }
+}
+```
+
+查询结果如下：
+
+```json
+{
+   "took": 6,
+   "timed_out": false,
+   "_shards": {
+      "total": 1,
+      "successful": 1,
+      "skipped": 0,
+      "failed": 0
+   },
+   "hits": {
+      "total": {
+         "value": 1,
+         "relation": "eq"
+      },
+      "max_score": 1,
+      "hits": [
+         {
+            "_index": "bank",
+            "_type": "_doc",
+            "_id": "20",
+            "_score": 1,
+            "_source": {
+               "account_number": 20, //match字段
+               "balance": 16418,
+               "firstname": "Elinor",
+               "lastname": "Ratliff",
+               "age": 36,
+               "gender": "M",
+               "address": "282 Kings Place",
+               "employer": "Scentric",
+               "email": "elinorratliff@scentric.com",
+               "city": "Ribera",
+               "state": "WA"
+            }
+         }
+      ]
+   }
+}
+```
+
+###### 查询 address 中包含 “mill” 的document
+
+```shell
+GET /bank/_search
+{
+    "query": {
+        "match": {"address": "mill"} 
+    }
+}
+```
+
+###### 查询 address 中包含 “mill” 或者 “lane” 的document
+
+```shell
+GET /bank/_search
+{
+    "query": {
+        "match": {"address": "mill lan"}
+    }
+}
+```
+
+##### match_phrase短语查询
+
+###### 查询 address 中包含短语 “mill lane” 的document
+
+```shell
+GET /bank/_search
+{
+    "query": {
+        "match_phrase": {"address": "mill lane"}
+    }
+}
+```
+
+##### bool and关系查询
+
+###### 查询 address 中同时包含 “mill” 和 “lane” 的document
+
+```shell
+GET /bank/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+               { "match": {  "address": "mill" } },
+               { "match": { "address": "lane" } }
+            ]
+        }
+    }
+}
+```
+
+##### **bool or** 关系查询
+
+###### 查询 address 中包含 “mill” 或者 “lane” 的document
+
+```shell
+GET /bank/_search
+{
+    "query": {
+        "bool": {
+            "should": [
+               { "match": { "address": "mill" } },
+               { "match": { "address": "lane"  } }
+            ]
+        }
+    }
+}
+```
+
+##### **bool not**关系查询
+
+###### 查询 address 中即不存在 “mill” 也不存在 “lane” 的document
+
+```shell
+GET /bank/_search
+{
+    "query": {
+        "bool": {
+            "must_not": [
+               { "match": { "address": "mill" } },
+               { "match": { "address": "lane" } }
+            ]
+        }
+    }
+}
+```
+
+##### **bool 组合**查询
+
+###### 查询 age=40，state!="ID" 的document
+
+```shell
+GET /bank/_search
+{
+    "query": {
+        "bool": {
+            "must": [
+               { "match": { "age": 40 } }
+            ],
+            "must_not": [
+               { "match": { "state": "ID" } }
+            ]
+        }
+    }
+}
+```
+
+##### **bool filter**查询
+
+###### 查询 20000<=balance<=30000 的document
+
+```shell
+GET /bank/_search
+{
+    "query": {
+        "bool": {
+            "filter":{
+                "range": {
+                   "balance": {
+                      "gte": 20000,
+                      "lte": 30000
+                   }
+                }
+            }
+        }
+    }
+}
+```
+
+### 结语
+
+暂时API分享这么多，后续会补充。
 
