@@ -10,6 +10,8 @@ Autowired和Resource这两个注解是面试中经常问到的，bean自动装�
 
 ### @Resource
 
+#### 装配顺序
+
 默认按照byName方式进行装配，属于J2EE自带注解，没有指定name时，name指的是变量名
 
 -  如果同时指定了name和type，则从Spring上下文中找到唯一匹配的bean进行装配，找不到则抛出异常
@@ -17,13 +19,64 @@ Autowired和Resource这两个注解是面试中经常问到的，bean自动装�
 - 如果指定了type，则从上下文中找到类型匹配的唯一bean进行装配，找不到或者找到多个，都会抛出异常
 - 如果既没有指定name，又没有指定type，则自动按照byName方式进行装配；如果没有匹配，则回退为一个原始类型进行匹配，如果匹配则自动装配
 
+#### 源码
+
+```java
+@Target({TYPE, FIELD, METHOD})
+@Retention(RUNTIME)
+public @interface Resource {
+    /**
+     * The JNDI name of the resource.  For field annotations,
+     * the default is the field name.  For method annotations,
+     * the default is the JavaBeans property name corresponding
+     * to the method.  For class annotations, there is no default
+     * and this must be specified.
+     */
+    String name() default "";
+
+    /**
+     * The Java type of the resource.  For field annotations,
+     * the default is the type of the field.  For method annotations,
+     * the default is the type of the JavaBeans property.
+     * For class annotations, there is no default and this must be
+     * specified.
+     */
+    Class<?> type() default java.lang.Object.class;
+ 
+  	......
+}
+```
+
+
+
 ### @Autowired
+
+#### 装配顺序
 
 默认按byType自动注入，是Spring的注解
 
 - 默认按类型装配（属于spring的），默认情况下必须要求依赖对象必须存在，如果要允许null值，可以设置它的required属性为false；
 
 - 按类型装配的过程中，如果发现找到多个bean，则又按照byName方式进行比对，如果还有多个，则报出异常；
+
+#### 源码
+
+```java
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Autowired {
+
+	/**
+	 * Declares whether the annotated dependency is required.
+	 * <p>Defaults to {@code true}.
+	 */
+	boolean required() default true;
+
+}
+```
+
+
 
 ### Demo分析
 
@@ -184,7 +237,7 @@ private AnimalService animalService2;
 ### 小结
 
 - 如果service只有一个实现类的时候，@Resource和@Autowired结果是一样的；
-- @Autowired默认byType注入，如果找到多个bean，则按byName匹配，如果还是多个那么报错；
+- @Autowired默认byType注入，如果找到多个bean，则按byName匹配，如果还是多个那么报错；可以和@Qualifier注解同时使用达到byName装配；
 - @Resource默认byName装配，可以指定name和type装配，比较灵活，推荐使用。
 
 
