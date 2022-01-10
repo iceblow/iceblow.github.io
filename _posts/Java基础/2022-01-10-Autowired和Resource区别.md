@@ -1,12 +1,12 @@
 ---
 layout: post
-title: @Autowired和Resource区别
+title: Autowired和Resource区别
 categories: [Java基础]
-description: @Autowired和Resource区别
-keywords: Autowired, Resource
+description: Autowired和Resource区别
+keywords: Autowired,Resource
 ---
 
-@Autowired和Resource这两个注解是面试中经常问到的，bean自动装配用到的，他们两个有什么区别呢？
+Autowired和Resource这两个注解是面试中经常问到的，bean自动装配用到的，他们两个有什么区别呢？
 
 ### @Resource
 
