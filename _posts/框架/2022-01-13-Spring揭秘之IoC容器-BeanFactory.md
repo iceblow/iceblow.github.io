@@ -6,9 +6,9 @@ description: Spring揭秘之IoC容器
 keywords: spring, ioc,BeanFactory
 ---
 
-Spring的IoC容器是一个IoC Service Provider，但是，这只是它被冠以IoC之名的部分原因，我们不能忽略的是“容器”。
+Spring的IoC容器是一个IoC Service Provider，但这只是它被冠以IoC之名的部分原因，我们不能忽略的是“容器”。
 
-Spring的IoC容器是一个提供IoC支持的轻量级容器，除了基本的IoC支持，它作为轻量级容器还提供了IoC之外的支持。如AOP框架支持、企业级服务集成等服务。
+Spring的IoC容器是一个提供IoC支持的轻量级容器，除了基本的IoC支持，还提供如AOP框架支持、企业级服务集成等服务。
 
 Spring的IoC容器和IoC Service Provider所提供的服务之间存在一定的交集，二者的关系如图。
 
@@ -18,13 +18,11 @@ Spring提供了两种容器类型：`BeanFactory`和`ApplicationContext`。
 
 ### BeanFactory
 
-基础类型IoC容器，提供完整的IoC服务支持。如果没有特殊指定，默认采用延迟初始化策略（lazy-load）。
+**基础类型IoC容器**，提供完整的IoC服务支持。如果没有特殊指定，**默认采用延迟初始化策略**（lazy-load）。
 
-只有当客户端对象需要访问容器中的某个受管对象的时候，才对该受管对象进行初始化以及依赖注入操作。所以，相对来说，容器启动初期速度较快，所需要的资源有限。
+只有当需要访问容器中的某个受管对象的时候，才进行初始化以及依赖注入操作。所以，容器启动初期速度较快，所需要的资源有限。对于资源有限，并且功能要求不是很严格的场景，BeanFactory是比较合适的IoC容器选择。
 
-对于资源有限，并且功能要求不是很严格的场景，BeanFactory是比较合适的IoC容器选择。
-
-BeanFactory，顾名思义，就是生产Bean的工厂，可以完成作为IoC Service Provider的所有职责，包括业务对象的注册和对象间依赖关系的绑定。
+BeanFactory，顾名思义，就是生产Bean的工厂，可以完成作为IoC Service Provider的所有职责，包括**业务对象的注册和对象间依赖关系的绑定。**
 
 以下是`BeanFactory`的源码：
 
@@ -252,7 +250,41 @@ byName和byType类型的自动绑定模式是针对property的自动绑定，而
 
 ##### bean 的 scope 
 
+BeanFactory除了拥有作为IoC Service Provider的职责，作为一个轻量级容器，它还有着其他一些职责，其中就包括对象的生命周期管理。
 
+scope用来声明容器中的对象的限定场景或对象的存活时间，即容器在对象进入其相应的scope之前，生成并装配这些对象，在该对象不再处于这些scope的限定之后，容器通常会销毁这些对象。
+
+Spring容器最初提供了两种bean的scope类型：singleton和prototype，但发布2.0之后，又引入了另外三种scope类型，即request、session和global session类型。不过这3种只有在支持Web应用的ApplicationContext中使用。
+
+需要注意的一点是，不要因为名字的原因而与GoF所提出的Singleton模式相混淆，二者的语意是不同的：标记为singleton的bean是由容器来保证这种类型的bean在同一个容器中只存在一个共享实例；而Singleton模式则是保证在同一个Classloader中只存在一个这种类型的实例。
+
+###### singleton
+
+标记为拥有singleton scope的对象定义，在Spring的**IoC容器中只存在一个实例**，所有对该对象的引用将共享这个实例。该实例从容器启动，并因为**第一次被请求而初始化之后，将一直存活到容器退出**，它与IoC容器“几乎”拥有相同的“寿命”。
+
+######  prototype 
+
+容器在接到该类型对象的请求的时候，会每次都重新生成一个新的对象实例给请求方。但是只要准备完毕，并且对象**实例返回给请求方之后，容器就不再拥有当前返回对象的引用**，请求方需要自己负责当前返回对象的后继生命周期的管理工作，包括该对象的销毁。
+
+所以，对于那些请求方不能共享使用的对象类型，应该将其bean定义的scope设置为prototype。
+
+###### request
+
+```xml
+<bean id="requestProcessor" class="...RequestProcessor" scope="request"/> 
+```
+
+Spring容器，即XmlWebApplicationContext会为每个HTTP请求创建一个全新的Request Processor对象供当前请求使用，当请求结束后，该对象实例的生命周期即告结束。当同时有10个HTTP请求进来的时候，容器会分别针对这10个请求返回10个全新的RequestProcessor对象实例，且它们之间互不干扰。从不是很严格的意义上说，request可以看作prototype的一种特例。
+
+###### session
+
+对于Web应用来说，放到session中的最普遍的信息就是用户的登录信息。
+
+Spring容器会为每个独立的session创建属于它们自己的全新的对象实例。与request相比，除了拥有session scope的bean的实例具有比request scope的bean可能更长的存活时间，其他方面没什么差别。
+
+###### global session
+
+global session只有基于portlet的Web应用程序中才有意义，如果在普通的基于servlet的Web应用中使用，容器会将其作为普通的session类型的scope对待。
 
 
 
