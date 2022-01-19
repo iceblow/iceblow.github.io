@@ -286,7 +286,34 @@ Spring容器会为每个独立的session创建属于它们自己的全新的对�
 
 global session只有基于portlet的Web应用程序中才有意义，如果在普通的基于servlet的Web应用中使用，容器会将其作为普通的session类型的scope对待。
 
+##### 工厂方法与FactoryBean 
 
+**FactoryBean是Spring容器提供的一种可以扩展容器对象实例化逻辑的接口**，请不要将其与容器名BeanFactory相混淆。FactoryBean，其主语是Bean，定语为Factory，也就是说，它本身与其他注册到容器的对象一样，只是一个Bean而已，只不过，这种类型的Bean本身就是生产对象的工厂。
+
+当某些对象的实例化过程过于烦琐，或者某些第三方库不能直接注册到Spring容器的时候，就可以实现org.springframework.beans.factory.FactoryBean接口，给出自己的对象实例化逻辑代码。当然，不使用Fac
+
+toryBean，而像通常那样实现自定义的工厂方法类也是可以的。
+
+FactoryBean接口只定义了三个方法，如下：
+
+```java
+public interface FactoryBean<T> {
+  String OBJECT_TYPE_ATTRIBUTE = "factoryBeanObjectType";
+  
+  //返回生产的对象实例
+  @Nullable
+	T getObject() throws Exception;
+  
+  // 对象的类型
+  @Nullable
+	Class<?> getObjectType();
+  
+  //对象是否单例，默认是
+  default boolean isSingleton() {
+		return true;
+	}
+}
+```
 
 ### ApplicationContext
 
@@ -295,4 +322,6 @@ ApplicationContext在BeanFactory的基础上构建，是相对比较高级的容
 ApplicationContext所管理的对象，在该类型容器启动之后，默认全部初始化并绑定完成。所以，相对于BeanFactory来说，会要求更多的系统资源，同时，因为在启动时就完成所有初始化，容器启动时间较之BeanFactory也会长一些。
 
 在那些系统资源充足，并且要求更多功能的场景中，ApplicationContext类型容器是比较合适的。
+
+详细内容会在后面的文章中介绍。
 
