@@ -1,19 +1,28 @@
 ---
 layout: post
-title: Spring Cloud Alibaba分布式框架
+title: Spring Cloud Alibaba
 categories: 框架
 description: 分布式框架
 keywords: 分布式框架
 excerpt: Spring Cloud Alibaba 为分布式应用开发提供一站式解决方案。它包含开发分布式应用程序所需的所有组件，使您可以轻松地使用 Spring Cloud 开发应用程序。
 ---
 
-## Spring Cloud Alibaba分布式框架 ##
-
 Spring Cloud Alibaba 为分布式应用开发提供一站式解决方案。它包含开发分布式应用程序所需的所有组件，使您可以轻松地使用 Spring Cloud 开发应用程序。
 
 使用Spring Cloud Alibaba，您只需添加一些注解和少量配置，即可将Spring Cloud应用连接到阿里巴巴的分布式解决方案，并通过阿里巴巴中间件构建分布式应用系统。
 
-[详细介绍见官方文档](https://spring.io/projects/spring-cloud-alibaba)
+[详细介绍](https://spring.io/projects/spring-cloud-alibaba)
+
+### 对比Springcloud
+
+| 功能组件                                             | Spring Cloud                         | Dubbo Spring Cloud                                   |
+| ---------------------------------------------------- | ------------------------------------ | ---------------------------------------------------- |
+| 分布式配置（Distributed configuration）              | Git、Zookeeper、Consul、JDBC         | Spring Cloud 分布式配置 + Dubbo 配置中心[6]          |
+| 服务注册与发现（Service registration and discovery） | Eureka、Zookeeper、Consul            | Spring Cloud 原生注册中心[7] + Dubbo 原生注册中心[8] |
+| 负载均衡（Load balancing）                           | Ribbon（随机、轮询等算法）           | Dubbo 内建实现（随机、轮询等算法 + 权重等特性）      |
+| 服务熔断（Circuit Breakers）                         | Spring Cloud Hystrix                 | Spring Cloud Hystrix + Alibaba Sentinel[9] 等        |
+| 服务调用（Service-to-service calls）                 | Open Feign、`RestTemplate`           | Spring Cloud 服务调用 + Dubbo `@Reference`           |
+| 链路跟踪（Tracing）                                  | Spring Cloud Sleuth[10] + Zipkin[11] | Zipkin、opentracing 等                               |
 
 ### 组件
 
@@ -51,24 +60,6 @@ Spring Cloud Alibaba 为分布式应用开发提供一站式解决方案。它�
 - 短信服务
 - Redis
 - MySQL
-
-### 快速开始
-
-最简单的方法就是添加依赖：
-
-```java
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-            <version>{project-version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
-```
 
 
 
