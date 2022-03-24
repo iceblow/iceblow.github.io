@@ -4,7 +4,7 @@
 baseurl:
 url: https://iceblow.github.io 
 date_format: "ordinal"
-title: 技术博客
+title: "个人技术博客"
 subtitle: "公众号：JAVA编程实战"
 description: "个人博客，学习总结，技术分享"
 keywords: 博客，技术，总结
@@ -21,7 +21,7 @@ components:
     # 分享
     # weibo,qq,wechat,douban,qzone,linkedin,facebook,twitter
     share:
-        enabled: false
+        enabled: true
         hide-platforms: qq,facebook
     # 不蒜子访问统计
     busuanzi:
@@ -29,7 +29,7 @@ components:
         start_date: 2021-01-01
     # My Popular Repositories
     side_bar_repo:
-        enabled: true
+        enabled: false
         limit: 1
     # 文章字数统计
     word_count:
