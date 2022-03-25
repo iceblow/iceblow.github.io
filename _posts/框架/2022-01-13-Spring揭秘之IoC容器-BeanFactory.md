@@ -12,7 +12,7 @@ Spring的IoC容器是一个提供IoC支持的轻量级容器，除了基本的Io
 
 Spring的IoC容器和IoC Service Provider所提供的服务之间存在一定的交集，二者的关系如图。
 
-![image-20220113163459443](https://gitee.com/dxyin/pic/raw/master/20220113163459.png)
+![image-20220113163459443](https://raw.githubusercontent.com/iceblow/images/main/20220325170050.png)
 
 Spring提供了两种容器类型：`BeanFactory`和`ApplicationContext`。
 
@@ -27,12 +27,6 @@ BeanFactory，顾名思义，就是生产Bean的工厂，可以完成作为IoC S
 以下是`BeanFactory`的源码：
 
 ```java
-package org.springframework.beans.factory;
-
-import org.springframework.beans.BeansException;
-import org.springframework.core.ResolvableType;
-import org.springframework.lang.Nullable;
-
 public interface BeanFactory {
 
 	String FACTORY_BEAN_PREFIX = "&";
@@ -46,10 +40,6 @@ public interface BeanFactory {
 	<T> T getBean(Class<T> requiredType) throws BeansException;
 
 	<T> T getBean(Class<T> requiredType, Object... args) throws BeansException;
-
-	<T> ObjectProvider<T> getBeanProvider(Class<T> requiredType);
-
-	<T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType);
 
 	boolean containsBean(String name);
 
@@ -159,7 +149,7 @@ BeanFactory只是一个接口，我们最终需要一个该接口的实现来进
 
 BeanDefinitionRegistry接口定义抽象了Bean的注册逻辑。通常情况下，具体的BeanFactory实现类会实现这个接口来管理Bean的注册。
 
-![image-20220114160911666](https://gitee.com/dxyin/pic/raw/master/20220114160911.png)
+![image-20220114160911666](https://raw.githubusercontent.com/iceblow/images/main/20220325170059.png)
 
 ##### 外部配置文件方式
 
