@@ -18,22 +18,17 @@ BeanFactory是一个接口，只定义如何访问容器内管理的Bean的方�
 
 ```java
 public interface BeanFactory {
-
   // FactoryBean的前缀
 	String FACTORY_BEAN_PREFIX = "&";
 
+  // beanName或Class获取bean
 	Object getBean(String name) throws BeansException;
-  
 	<T> T getBean(String name, Class<T> requiredType) throws BeansException;
-
 	Object getBean(String name, Object... args) throws BeansException;
-
 	<T> T getBean(Class<T> requiredType) throws BeansException;
-
 	<T> T getBean(Class<T> requiredType, Object... args) throws BeansException;
 
 	boolean containsBean(String name);
-
 	boolean isSingleton(String name) throws NoSuchBeanDefinitionException;
 }
 ```
