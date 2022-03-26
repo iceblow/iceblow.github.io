@@ -35,3 +35,31 @@ public interface BeanFactory {
 
 ### FactoryBean
 
+```java
+public interface FactoryBean<T> {
+
+	String OBJECT_TYPE_ATTRIBUTE = "factoryBeanObjectType";
+
+	@Nullable
+	T getObject() throws Exception;
+
+	@Nullable
+	Class<?> getObjectType();
+
+	default boolean isSingleton() {
+		return true;
+	}
+}
+```
+
+
+
+### 两者对比
+
+|          | BeanFactory                                                  | FactoryBean<T> |
+| -------- | ------------------------------------------------------------ | -------------- |
+| 类型     | 接口                                                         | 接口           |
+| 作用     | 生产bean的工厂，基础型IoC容器                                |                |
+| 主要方法 | getBean(String name)<br/>getBean(Class<T> requiredType)<br/>boolean isSingleton(String name) |                |
+|          |                                                              |                |
+

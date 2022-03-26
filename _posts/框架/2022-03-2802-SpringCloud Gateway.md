@@ -27,7 +27,7 @@ Spring Cloud Gateway 旨在提供一种简单而有效的方式来路由到 API�
 
 以下是工作原理
 
-<img src="https://gitee.com/dxyin/pic/raw/master/20220301105532.png" alt="Spring Cloud 网关示意图" style="zoom: 67%;" />
+<img src="https://cdn.jsdelivr.net/gh/iceblow/images/20220301105532.png" alt="Spring Cloud 网关示意图" style="zoom: 67%;" />
 
 客户端向 Spring Cloud Gateway 发出请求。如果网关处理程序映射确定请求与路由匹配，则将其发送到网关 Web 处理程序。
 
