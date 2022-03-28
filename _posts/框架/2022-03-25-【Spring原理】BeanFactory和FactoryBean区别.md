@@ -35,31 +35,37 @@ public interface BeanFactory {
 
 ### FactoryBean
 
+一般情况下，Spring通过反射机制利用<bean>的class属性指定实现类实例化Bean，在某些情况下，实例化Bean过程比较复杂，如果按照传统的方式，则需要在<bean>中提供大量的配置信息。配置方式的灵活性是受限的。
+
+Spring为此提供了一个org.springframework.bean.factory.FactoryBean的工厂类接口，用户可以通过实现该接口定制实例化Bean的逻辑。
+
+这个Bean不是简单的Bean，而是一个能生产或者修饰对象生成的工厂Bean。
+
 ```java
 public interface FactoryBean<T> {
 
 	String OBJECT_TYPE_ATTRIBUTE = "factoryBeanObjectType";
 
+  // 返回FactoryBean创建的bean
 	@Nullable
 	T getObject() throws Exception;
 
+  // 返回创建的bean类型
 	@Nullable
 	Class<?> getObjectType();
 
+  // 默认单例
 	default boolean isSingleton() {
 		return true;
 	}
 }
 ```
 
-
-
 ### 两者对比
 
-|          | BeanFactory                                                  | FactoryBean<T> |
-| -------- | ------------------------------------------------------------ | -------------- |
-| 类型     | 接口                                                         | 接口           |
-| 作用     | 生产bean的工厂，基础型IoC容器                                |                |
-| 主要方法 | getBean(String name)<br/>getBean(Class<T> requiredType)<br/>boolean isSingleton(String name) |                |
-|          |                                                              |                |
+| 对比     | BeanFactory                                                  | FactoryBean<T>                                               |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 类型     | 接口                                                         | 接口                                                         |
+| 作用     | 生产bean的工厂，基础型IoC容器                                | 能生产或者修饰对象生成的工厂Bean，实现该接口可以定制实例化bean |
+| 主要方法 | getBean(String name)<br/>getBean(Class<T> requiredType)<br/>isSingleton(String name) | getObject()<br/>getObjectType()<br/>isSingleton()            |
 
