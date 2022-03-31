@@ -61,6 +61,97 @@ public interface FactoryBean<T> {
 }
 ```
 
+### Demo
+
+为了更清晰直观理解BeanFactory和FactoryBean，我们写了一个demo，代码如下：
+
+```java
+@Data
+@ToString
+public class User {
+
+    private String name;
+
+    private String role;
+}
+```
+
+#### UserFactoryBean
+
+```java
+public class UserFactoryBean implements FactoryBean<User> {
+	// 定制化bean
+    @Override
+    public User getObject() throws Exception {
+        User user = new User();
+        user.setName("UserFactoryBean init name");
+        user.setAddr("UserFactoryBean init addr");
+        return user;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return User.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+}
+```
+
+#### 注解@Bean
+
+```java
+@Configuration
+public class Config {
+
+  // 注解bean
+    @Bean
+    public User user() {
+        User user = new User();
+        user.setName("user bean name");
+        user.setRole("user bean role");
+        return user;
+    }
+}
+```
+
+#### 测试类
+
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {UserFactoryBean.class, Config.class})
+@Slf4j
+public class UserFactoryBeanTest {
+
+    @Resource
+    BeanFactory beanFactory;
+
+    @Test
+    public void test() {
+        User user = beanFactory.getBean("userFactoryBean", User.class);
+        // 结果: User(name=UserFactoryBean init name, role=UserFactoryBean init role)
+        log.info(user.toString());
+
+        User user2 = beanFactory.getBean("user", User.class);
+        // 结果: User(name=user bean name, role=user bean role)
+        log.info(user2.toString());
+
+        Object object = beanFactory.getBean("&userFactoryBean");
+        // 结果: true
+        System.out.println(object instanceof UserFactoryBean);
+    }
+}
+```
+
+#### 结论
+
+beanFactory从`userFactoryBean`获取到的对象是`getObject()`方法定制的bean，并不是`userFactoryBean`对象本身。
+
+如果需要获取`userFactoryBean`，那么beanName需要加上“&”，即`&userFactoryBean`。
+
 ### 两者对比
 
 | 对比     | BeanFactory                                                  | FactoryBean<T>                                               |
