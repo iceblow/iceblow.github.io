@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Springcloud Gateway
-categories: [架构]
+categories: [框架]
 description: Springcloud Gateway
 keywords: gateway, 网关, Springcloud, 微服务
 ---
