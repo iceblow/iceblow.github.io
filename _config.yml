@@ -4,8 +4,8 @@
 baseurl:
 url: https://iceblow.github.io 
 date_format: "ordinal"
-title: "个人技术博客"
-subtitle: "公众号：JAVA编程实战"
+title: "我的博客"
+subtitle: "个人技术总结、持续更新中"
 description: "个人博客，学习总结，技术分享"
 keywords: 博客，技术，总结
 timezone: Asia/Shanghai
@@ -37,7 +37,7 @@ components:
     # 页面右上角，以及「关于」页面的二维码
     # 修改图片请替换 assets/images/qrcode.jpg
     qrcode:
-        enabled: true
+        enabled: false
         image_alt: 微信公众号
 # 压缩页面内容
 compress_html:
@@ -99,7 +99,7 @@ markdown: kramdown
 kramdown:
     input: GFM
 highlighter: rouge
-paginate: 10
+paginate: 6
 lsi: false
 quiet: false
 excerpt_separator: "\n\n"
