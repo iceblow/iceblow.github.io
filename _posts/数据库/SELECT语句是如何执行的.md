@@ -1,5 +1,3 @@
-#### 前言
-
 说起SQL语句,我们在工作中写的最多的就是查询(SELTCT)语句了,虽然经常写,但是你知道一条SELECT语句是如何执行的么?
 
 如果我们想写出高性能的SQL,最好的方法就是弄清楚mysql是如何优化和执行查询的。	
@@ -30,9 +28,7 @@ select * from table_XX where id = 1；
 mysql -h {server_ip} -u {username} {password}
 ```
 
-当然我们也可以使用图形化界面，包括Navicat和SQLyog，如下图所示。
-
-![](https://note.youdao.com/yws/public/resource/2a2cafd74b2dc4c3f1abfeff77d0eb32/xmlnote/D8E2DCDE2BA648DDA06895A9B19956F2/7215)
+当然我们也可以使用图形化界面，包括Navicat和SQLyog等。
 
 我们需要输入数据库IP地址、端口（默认3306），用户名和密码。如果用户名或密码不对，MYSQL会提示"Access denied for user"的错误，然后客户端程序结束执行。
 
