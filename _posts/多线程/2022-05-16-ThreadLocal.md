@@ -3,7 +3,7 @@ layout: post
 title: 【多线程】聊下ThreadLocal
 categories: [多线程]
 description: ThreadLocal
-keywords: ThreadLocal, 多线程
+keywords: ThreadLocal,多线程
 ---
 
 接触并发编程的都知道ThreadLocal，简单来说，这个类能使线程中的某个值与保存值的对象关联起来，它提供了get与set等访问接口或方法，这些方法为每个使用该变量的线程都存有一个独立的副本，因此get总是返回由当前执行线程在调用set时设置的最新值。
@@ -12,20 +12,9 @@ keywords: ThreadLocal, 多线程
 
 我们先看JDK的源码，官方原文部分描述如下：
 
-> ```
-> * This class provides thread-local variables.  These variables differ from
-> * their normal counterparts in that each thread that accesses one (via its
-> * {@code get} or {@code set} method) has its own, independently initialized
-> * copy of the variable.  {@code ThreadLocal} instances are typically private
-> * static fields in classes that wish to associate state with a thread (e.g.,
-> * a user ID or Transaction ID).
-> 
->  <p>Each thread holds an implicit reference to its copy of a thread-local
->  * variable as long as the thread is alive and the {@code ThreadLocal}
->  * instance is accessible; after a thread goes away, all of its copies of
->  * thread-local instances are subject to garbage collection (unless other
->  * references to these copies exist).
-> ```
+> This class provides thread-local variables.  These variables differ from their normal counterparts in that each thread that accesses one (via its {@code get} or {@code set} method) has its own, independently initialized copy of the variable.  {@code ThreadLocal} instances are typically private static fields in classes that wish to associate state with a thread (e.g., a user ID or Transaction ID).
+>
+> Each thread holds an implicit reference to its copy of a thread-local variable as long as the thread is alive and the {@code ThreadLocal} instance is accessible; after a thread goes away, all of its copies of thread-local instances are subject to garbage collection (unless other references to these copies exist).
 
 我们翻译过来就是：
 
@@ -147,16 +136,7 @@ ThreadLocal的get()方法逻辑：
 
 我们来看下JDK对ThreadLocalMap的描述。
 
-> ```
-> * ThreadLocalMap is a customized hash map suitable only for
-> * maintaining thread local values. No operations are exported
-> * outside of the ThreadLocal class. The class is package private to
-> * allow declaration of fields in class Thread.  To help deal with
-> * very large and long-lived usages, the hash table entries use
-> * WeakReferences for keys. However, since reference queues are not
-> * used, stale entries are guaranteed to be removed only when
-> * the table starts running out of space.
-> ```
+> ThreadLocalMap is a customized hash map suitable only for maintaining thread local values. No operations are exportedoutside of the ThreadLocal class. The class is package private to allow declaration of fields in class Thread.  To help deal with very large and long-lived usages, the hash table entries use WeakReferences for keys. However, since reference queues are not used, stale entries are guaranteed to be removed only when the table starts running out of space.
 
 翻译过来如下：
 
