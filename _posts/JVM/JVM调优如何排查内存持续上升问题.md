@@ -20,7 +20,7 @@ top -s 10
 
 以上命令代表每10s打印一次系统负载信息。结果如下：
 
-![image-20220517120530321](https://cdn.jsdelivr.net/gh/iceblow/images/20220517120530.png)
+![image-20220517120530321](http://qiniuyun.jeesoul.com/img/20220517120530.png)
 
 我们根据内存进行排序
 
@@ -28,7 +28,7 @@ top -s 10
 top -o mem -s 10
 ```
 
-![image-20220517121316852](https://cdn.jsdelivr.net/gh/iceblow/images/20220517121316.png)
+![image-20220517121316852](http://qiniuyun.jeesoul.com/img/20220517121316.png)
 
 找到占用内存最大的java进程，pid = 81004
 
@@ -36,4 +36,4 @@ top -o mem -s 10
 top -pid 81004
 ```
 
-![image-20220517121515826](https://cdn.jsdelivr.net/gh/iceblow/images/20220517121515.png)
+![image-20220517121515826](http://qiniuyun.jeesoul.com/img/20220517121515.png)

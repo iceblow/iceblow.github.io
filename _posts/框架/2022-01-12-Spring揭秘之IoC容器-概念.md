@@ -45,7 +45,7 @@ public class IocService {
 
 实际上，IoC就是为了帮助我们避免之前的“大费周折”，而提供了更加轻松简洁的方式。它的反转，就反转在让你从原来的事必躬亲，转变为现在的享受服务。
 
-![image-20220112184823366](https://cdn.jsdelivr.net/gh/iceblow/images/20220112184823.png)
+![image-20220112184823366](http://qiniuyun.jeesoul.com/img/20220112184823.png)
 
 ### 概念
 

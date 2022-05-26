@@ -87,8 +87,8 @@ protected AutoConfigurationEntry getAutoConfigurationEntry(AnnotationMetadata an
 
 configurations截图如下：
 
-![image-20220321120907243](https://cdn.jsdelivr.net/gh/iceblow/images/20220321120907.png)
+![image-20220321120907243](http://qiniuyun.jeesoul.com/img/20220321120907.png)
 
 实现原理大致流程图如下：
 
-![image-20220321175401454](https://cdn.jsdelivr.net/gh/iceblow/images/20220321175401.png)
+![image-20220321175401454](http://qiniuyun.jeesoul.com/img/20220321175401.png)
