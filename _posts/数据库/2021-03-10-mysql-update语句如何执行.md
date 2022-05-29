@@ -15,7 +15,7 @@ update table_xxx  set c= c+1 where ID = 2;
 
 UPDATE执行过程和查询语句过程相似,也会走一遍连接器到执行器再到存储引擎。为了查看方便，我把图放在这里。
 
-![](http://qiniuyun.jeesoul.com/img/20220520124103.png)
+![](https://img-1257951221.cos.ap-shanghai.myqcloud.com//20220520124103.png)
 
 首先，执行语句前要先连接数据库，这是连接器的工作。
 

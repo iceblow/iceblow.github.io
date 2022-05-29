@@ -531,7 +531,7 @@ curl -X GET "localhost:9200/_cat/indices?v"
 
 结果出现了很多索引，因为之前安装了elk等其他工具，直接忽略其他索引，重点关注本次导入的索引bank。
 
-![image-20211130151141811](http://qiniuyun.jeesoul.com/img/20211130151142.png)
+![image-20211130151141811](https://img-1257951221.cos.ap-shanghai.myqcloud.com//20211130151142.png)
 
 发现已经新增了索引`bank`，其中有1000个document。
 

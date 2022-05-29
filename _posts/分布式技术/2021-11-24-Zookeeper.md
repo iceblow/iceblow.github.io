@@ -18,7 +18,7 @@ Zookeeper 的设计目标是将那些复杂且容易出错的分布式一致性�
 
 客户端仅连接到单个 ZooKeeper 服务器。客户端维护一个 TCP 连接，通过它发送请求、获取响应、获取监视事件并发送心跳。如果与服务器的 TCP 连接中断，客户端将连接到不同的服务器。当客户端首次连接到 ZooKeeper 服务时，第一个 ZooKeeper 服务器将为客户端设置会话。如果客户端需要连接到另一台服务器，该会话将与新服务器重新建立。
 
-![img](http://qiniuyun.jeesoul.com/img/20220321112446.png)
+![img](https://img-1257951221.cos.ap-shanghai.myqcloud.com//20220321112446.png)
 
 
 
@@ -26,7 +26,7 @@ Zookeeper 的设计目标是将那些复杂且容易出错的分布式一致性�
 
 zookkeeper 提供的名称空间非常类似于标准文件系统，key-value 的形式存储。名称 key 由斜线 **/** 分割的一系列路径元素，zookeeper 名称空间中的每个节点都是由一个路径标识。
 
-![img](http://qiniuyun.jeesoul.com/img/20211124163227.jpg)
+![img](https://img-1257951221.cos.ap-shanghai.myqcloud.com//20211124163227.jpg)
 
 ###  CAP 理论
 
@@ -40,7 +40,7 @@ CAP 理论指出对于一个分布式计算系统来说，不可能同时满足�
 
 在这三个基本需求中，最多只能同时满足其中的两项，P 是必须的，因此只能在 CP 和 AP 中选择，**zookeeper 保证的是 CP**，对比 spring cloud 系统中的注册中心 eruka 实现的是 AP。
 
-<img src="http://qiniuyun.jeesoul.com/img/20211124163638.png" alt="img" style="zoom:67%;" />
+<img src="https://img-1257951221.cos.ap-shanghai.myqcloud.com//20211124163638.png" alt="img" style="zoom:67%;" />
 
 ### BASE 理论
 
@@ -250,7 +250,7 @@ set path data [version]
 
 1、客户端调用 create 方法创建类似定义锁方式的临时顺序节点。
 
-![img](http://qiniuyun.jeesoul.com/img/20211125183207.png)
+![img](https://img-1257951221.cos.ap-shanghai.myqcloud.com//20211125183207.png)
 
 2、客户端调用 getChildren 接口来获取所有已创建的子节点列表。
 

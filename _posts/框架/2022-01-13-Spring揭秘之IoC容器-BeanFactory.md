@@ -12,7 +12,7 @@ Spring的IoC容器是一个提供IoC支持的轻量级容器，除了基本的Io
 
 Spring的IoC容器和IoC Service Provider所提供的服务之间存在一定的交集，二者的关系如图。
 
-![image-20220113163459443](http://qiniuyun.jeesoul.com/img/20220325170050.png)
+![image-20220113163459443](https://img-1257951221.cos.ap-shanghai.myqcloud.com//20220325170050.png)
 
 Spring提供了两种容器类型：`BeanFactory`和`ApplicationContext`。
 
@@ -149,7 +149,7 @@ BeanFactory只是一个接口，我们最终需要一个该接口的实现来进
 
 BeanDefinitionRegistry接口定义抽象了Bean的注册逻辑。通常情况下，具体的BeanFactory实现类会实现这个接口来管理Bean的注册。
 
-![image-20220114160911666](http://qiniuyun.jeesoul.com/img/20220325170059.png)
+![image-20220114160911666](https://img-1257951221.cos.ap-shanghai.myqcloud.com//20220325170059.png)
 
 ##### 外部配置文件方式
 

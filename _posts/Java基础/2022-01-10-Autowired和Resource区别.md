@@ -137,7 +137,7 @@ public class CatService implements AnimalService {
   private AnimalService animalService;
 ```
 
-![image-20220110135054344](http://qiniuyun.jeesoul.com/img/20220110135054.png)
+![image-20220110135054344](https://img-1257951221.cos.ap-shanghai.myqcloud.com//20220110135054.png)
 
 IDEA会提示不能自动装配，因为AnimalService的bean type有两个。
 
@@ -191,7 +191,7 @@ NoUniqueBeanDefinitionException: No qualifying bean of type 'com.example.demo.te
 expected single matching bean but found 2: catService,dogService
 ```
 
-![image-20220110143210825](http://qiniuyun.jeesoul.com/img/20220110143210.png)
+![image-20220110143210825](https://img-1257951221.cos.ap-shanghai.myqcloud.com//20220110143210.png)
 
 ###### 同时指定name和type
 
